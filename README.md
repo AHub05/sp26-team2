@@ -2,7 +2,7 @@
 > Spartan Marketplace (Minerva’s List)
 
 ## Team Members
-> Alexander Hubbard
+> Alexander Hubbard \
 > Adrian Escobar
 
 ## Description 
