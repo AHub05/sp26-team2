@@ -1,8 +1,8 @@
 
 # Requirements – Starter Template
 
-**Project Name:** Your App Name \
-**Team:** Names and roles \
+**Project Name:** MinervasList\ Spartan MarketPlace
+**Team:** Alex Hubbard(Customer) \Adrian Escobar (Provider)
 **Course:** CSC 340\
 **Version:** 1.0\
 **Date:** 2026-01-30
@@ -19,7 +19,6 @@
 **Primary Users / Roles.**
 - **Customer (e.g., Student/Patient/Pet Owner/etc. )** — 1 line goal statement.
 - **Provider (e.g., Teacher/Doctor/Pet Sitter/etc. )** — 1 line goal statement.
-- **SysAdmin (optional)** — 1 line goal statement.
 
 **Scope (this semester).**
 - <capability 1>
@@ -59,47 +58,61 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
   ```
 
 ### 2.2 Provider Stories
-- **US‑PROV‑001 — <short title>**  
-  _Story:_ As a provider, I want … so that …  
+- **US‑PROV‑001 — <Create item listing>**  
+  _Story:_ As a provider, I want to create a listing with photos, description, and price so that students can see and purchase my item.  
   _Acceptance:_
   ```gherkin
-  Scenario: <happy path>
-    Given <preconditions>
-    When  <action>
-    Then  <observable outcome>
+  Scenario: Provider succesfully creates a listing
+    Given the provider is logged into their verified account student account and the provider is on the "create listing" tab
+    When  the provider uploads atleast one photo, enters a title, a description and a price and clicks "post" 
+    Then  the new listing appears in the browse feed, and the lisitng is visable through the providers profile.
   ```
 
-- **US‑PROV‑002 — <short title>**  
-  _Story:_ As a provider, I want … so that …  
+- **US‑PROV‑002 — <Manage my listings >**  
+  _Story:_ As a provider, I want to edit or remove my lisitng so that my posted items stay accurate and up to date 
   _Acceptance:_
   ```gherkin
-  Scenario: <happy path>
-    Given <preconditions>
-    When  <action>
-    Then  <observable outcome>
-  ```
+  Scenario: Provider edits an existing listing
+    Given the provider is logged into their account and the provider has at least one active listing
+    When  the provider selects a listing and "updates" the description or price and clicks "Save"
+    Then  the listing is updated in the marketplace feed and other users see the new information
 
-### 2.3 SysAdmin Stories
-- **US‑ADMIN‑001 — <short title>**  
-  _Story:_ As a sysadmin, I want … so that …  
+  Scenario: Provider deletes a listing
+    Given the provider is logged into their account and the provider has at least one active listing
+    When the provider selects "Delete" on a listing and confirms the action
+    Then the listing is removed from the marketplace feed and the item no longer appears on the provider’s profile
+  ```
+  - **US‑PROV‑003 — <Register and Manage Profile>**  
+  _Story:_ As a provider, I want to register with my university email and manage my profile so that I can create listings and be recognized as a verified student user.
   _Acceptance:_
   ```gherkin
-  Scenario: <happy path>
-    Given <preconditions>
-    When  <action>
-    Then  <observable outcome>
-  ```
+  Scenario: Student successfully registers a verified account
+    Given a user is on the Minervas List registration page 
+    When the user signs up using a valid @uncg.edu email address and completes the required profile information
+    Then the system creates a verified student account and the user can access both "Browse" and "Create" features
+    ```
 
-- **US‑ADMIN‑002 — <short title>**  
-  _Story:_ As a sysadmin, I want … so that …  
+- **US‑PROV‑004 — <sUpdate Provider Profile Information>**  
+  _Story:_ As a provider, I want to edit my profile details so that my account information stays accurate.
   _Acceptance:_
   ```gherkin
-  Scenario: <happy path>
-    Given <preconditions>
-    When  <action>
-    Then  <observable outcome>
+  Scenario: Provider updates profile information
+    Given the provider is logged into their account
+    And the provider is on their profile settings page
+    When the provider updates their display name, profile picture, or contact preferences and clicks "Save"
+    Then the updated information appears on their public profile
   ```
-
+- **US‑PROV‑005 — <Reject Non-Student Email Registration>**  
+  _Story:_ As a provider, I want the system to restrict registration to university emails so that only verified students can create accounts. 
+  _Acceptance:_
+  ```gherkin
+  Scenario: Non-student email is rejected
+    Given a user is on the registration page
+    When  the user attempts to register using an email that does not end in @uncg.edu
+    Then  the system displays an error message
+    And the account is not created
+  ```
+  
 ---
 
 ## 3. Non‑Functional Requirements (make them measurable)
