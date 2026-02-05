@@ -58,7 +58,7 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
   ```
 
 ### 2.2 Provider Stories
-- **US‑PROV‑001 — <Create item listing>**  
+- **US‑PROV‑001 — Create item listing**  
   _Story:_ As a provider, I want to create a listing with photos, description, and price so that students can see and purchase my item.  
   _Acceptance:_
   ```gherkin
@@ -68,8 +68,9 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
     Then  the new listing appears in the browse feed, and the lisitng is visable through the providers profile.
   ```
 
-- **US‑PROV‑002 — <Manage my listings >**  
-  _Story:_ As a provider, I want to edit or remove my lisitng so that my posted items stay accurate and up to date 
+- **US‑PROV‑002 — Manage my listings**  
+  _Story:_ As a provider, I want to edit or remove my lisitng so that my posted items stay accurate and up to date.
+
   _Acceptance:_
   ```gherkin
   Scenario: Provider edits an existing listing
@@ -82,18 +83,24 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
     When the provider selects "Delete" on a listing and confirms the action
     Then the listing is removed from the marketplace feed and the item no longer appears on the provider’s profile
   ```
-  - **US‑PROV‑003 — <Register and Manage Profile>**  
+ 
+- **US‑PROV‑003 — Register and Manage Profile**  
   _Story:_ As a provider, I want to register with my university email and manage my profile so that I can create listings and be recognized as a verified student user.
+
   _Acceptance:_
   ```gherkin
   Scenario: Student successfully registers a verified account
-    Given a user is on the Minervas List registration page 
-    When the user signs up using a valid @uncg.edu email address and completes the required profile information
-    Then the system creates a verified student account and the user can access both "Browse" and "Create" features
+    Given a user is on the Minerva's List registration page 
+    When the user signs up using a valid @uncg.edu email address
+    And completes the required profile information
+    Then the system creates a verified student account 
+    And the user can access both "Browse" and "Create" features
     ```
 
-- **US‑PROV‑004 — <sUpdate Provider Profile Information>**  
+
+- **US‑PROV‑004 — Update Provider Profile Information**  
   _Story:_ As a provider, I want to edit my profile details so that my account information stays accurate.
+
   _Acceptance:_
   ```gherkin
   Scenario: Provider updates profile information
@@ -102,8 +109,10 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
     When the provider updates their display name, profile picture, or contact preferences and clicks "Save"
     Then the updated information appears on their public profile
   ```
-- **US‑PROV‑005 — <Reject Non-Student Email Registration>**  
+
+- **US‑PROV‑005 — Reject Non-Student Email Registration**  
   _Story:_ As a provider, I want the system to restrict registration to university emails so that only verified students can create accounts. 
+
   _Acceptance:_
   ```gherkin
   Scenario: Non-student email is rejected
