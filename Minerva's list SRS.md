@@ -66,9 +66,9 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
   ```gherkin
   Scenario: Provider succesfully creates a listing
     Given the provider is logged into their verified student account
-    And the provider is on the "Create Listing" page
-    When  the provider uploads atleast one photo, enters a title, a description and a price and clicks "Post" 
-    Then  the new listing appears in the browse feed, and the lisitng is visable on the providers profile.
+      And the provider is on the "Create Listing" page
+    When the provider uploads atleast one photo, enters a title, a description and a price and clicks "Post" 
+    Then the new listing appears in the browse feed, and the lisitng is visable on the providers profile.
   ```
 
 - **US‑PROV‑002 — Manage My Listings**  
@@ -79,7 +79,7 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
   ```gherkin
   Scenario: Provider edits an existing listing
     Given the provider is logged into their account 
-    And the provider has at least one active listing
+      And the provider has at least one active listing
     When the provider selects a listing and updates the description or price and clicks "Save"
     Then the listing is updated in the marketplace feed and other users see the new information
 
