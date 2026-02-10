@@ -10,24 +10,28 @@
 ---
 
 ## 1. Overview
-**Vision.** One or two sentences: who this is for, the core problem, and the outcome.
+**Vision.** Minervas List is a marketplace app for Spartans to connect and sell items or services. The provides one place for the marketing and listing of items.
 
 **Glossary** Terms used in the project
 - **Term 1:** description.
 - **Term 2:** description
 
 **Primary Users / Roles.**
-- **Customer (e.g., Student/Patient/Pet Owner/etc. )** — 1 line goal statement.
-- **Provider (e.g., Teacher/Doctor/Pet Sitter/etc. )** — 1 line goal statement.
+- **Customer (e.g., Student/Patient/Pet Owner/etc. )** — Search, buy, and review products.
+- **Provider (e.g., Teacher/Doctor/Pet Sitter/etc. )** — List and sell items and view statistics.
 
 **Scope (this semester).**
-- <capability 1>
-- <capability 2>
-- <capability 3>
+- Account Login
+- Product Listing
+- Rating System
+- Searching/Filtering
+- Image Uploading
+- Messaging
 
 **Out of scope (deferred).**
-- <deferred 1>
-- <deferred 2>
+- Personalized Feed
+- Other University Inclusion
+- In-app Transactions
 
 > This document is **requirements‑level** and solution‑neutral; design decisions (UI layouts, API endpoints, schemas) are documented separately.
 
