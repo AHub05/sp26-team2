@@ -1,5 +1,5 @@
 
-# Requirements – Starter Template
+# Requirements
 
 **Project Name:** MinervasList\ Spartan MarketPlace
 **Team:** Alex Hubbard(Customer) \Adrian Escobar (Provider)
@@ -41,24 +41,44 @@
 Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`.** Each story includes at least one **Given/When/Then** scenario.
 
 ### 2.1 Customer Stories
-- **US‑CUST‑001 — <short title>**  
-  _Story:_ As a customer, I want … so that …  
+- **US‑CUST‑001 — Search Available Listings**  
+  _Story:_ As a customer, I want to filter and search through listings so that I don't have to look through listings of things I don't want  
   _Acceptance:_
   ```gherkin
-  Scenario: <happy path>
-    Given <preconditions>
-    When  <action>
-    Then  <observable outcome>
+  Scenario: Customer succesfully searches for listing
+    Given the customer is logged in and authenticated with the university
+    When  the customer types in the product or selects a catergory for something they are looking for
+    Then  all items related to the keyword or category show up and the customers search time is considerably shortened
   ```
 
-- **US‑CUST‑002 — <short title>**  
-  _Story:_ As a customer, I want … so that …  
+- **US‑CUST‑002 — Customer-Seller Messaging**  
+  _Story:_ As a customer, I want message sellers so that I know what I am buying or am able to haggle a deal  
   _Acceptance:_
   ```gherkin
-  Scenario: <happy path>
-    Given <preconditions>
-    When  <action>
-    Then  <observable outcome>
+  Scenario: Customer messages in regards to listing
+    Given a user is authorized and in good standing and on a listing page
+    When  there is vagueness in the descripiton so the customer presses the "Contact Seller" button
+    Then  a messaging box pops up where the customer can contact the seller live
+  ```
+
+- **US‑CUST‑003 — Review Item**  
+  _Story:_ As a customer, I want to leave reviews on products I bought so that future customers have an idea of what they are buying   
+  _Acceptance:_
+  ```gherkin
+  Scenario: Customer recieves a product that exceeds their expectations
+    Given a customer has confirmed purchase an item and they have not yet reviewed the item
+    When  they return to the product page where the review button is active and they click it
+    Then  the customer is able to write a review and leave a rating for the product, that they can post on the listing
+  ```
+
+- **US‑CUST‑004 — View Seller Profile**  
+  _Story:_ As a customer, I want view a sellers profile so that I can see wht they specialize in or if they are good  
+  _Acceptance:_
+  ```gherkin
+  Scenario: Customer is gauging seller quality
+    Given the customer is logged in and on a listing screen
+    When  the customer selects the sellers name or profile
+    Then  the name is a links to the seller's profile which shows their rating, reviews people have left, and other listings they have up
   ```
 
 ### 2.2 Provider Stories
@@ -137,20 +157,24 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
 ---
 
 ## 3. Non‑Functional Requirements (make them measurable)
-- **Performance:** description 
-- **Availability/Reliability:** description
-- **Security/Privacy:** description
-- **Usability:** description
+- **Performance:** application should provide search results within 5 seconds 
+- **Availability/Reliability:** services should be up 98% of the time
+- **Security/Privacy:** all users should authenticate through a UNCG email
+- **Usability:** this system shall be accessable by all students
 
 ---
 
 ## 4. Assumptions, Constraints, and Policies
-- list any rules, policies, assumptions, etc.
+- Must use a valid UNCG email (other Universities may be added later)
+- Sellers must maintain 2.0 rating out of 5.0
+- Customers may not leave reviews on products they have not bought, nor review unproportinally to times bought
+- Chat messages must remain professional
+- Assumes that eahc person uses their own account  
 
 ---
 
 ## 5. Milestones (course‑aligned)
-- **M2 Requirements** — this file + stories opened as issues. 
+- **M2 Requirements** — this file + stories opened as issues.
 - **M3 High‑fidelity prototype** — core customer/provider flows fully interactive. 
 - **M4 Design** — architecture, schema, API outline. 
 - **M5 Backend API** — key endpoints + tests. 
