@@ -85,7 +85,39 @@
 
   <body>
  <!---Nav bar--->
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+<a class="navbar-brand d-flex align-items-center" href="index.html">
+  <div style="background-color:#212529; padding:4px; border-radius:6px;">
+    <img src="../images/MinervaLogo.png"
+         alt="Minerva Logo"
+         style="height:38px;">
+  </div>
+  <span class="fw-bold text-white ms-2">Minerva's List</span>
+</a>
 
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="customer-prototype/login.html">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Provider/Profile.html">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="customer-prototype/listing.html">Browse Listings</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
     <main class="container my-4">
       <!-- Top profile section -->
@@ -304,5 +336,6 @@
         }
       });
     </script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
