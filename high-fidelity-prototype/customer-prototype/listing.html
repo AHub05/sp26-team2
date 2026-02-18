@@ -5,29 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minerva's List | Buy, Sell, Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+    .avatar {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+      }
+    </style>
 </head>
 <body>
     
     <!--Site Header-->
     <header class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <div><a class="navbar-brand">Logo</a></div>
+            <div><a class="navbar-brand" href="../index.html">Logo</a></div>
             <div>
                 <form class="d-flex" role="search">
                     <input class="form-control" type="search" placeholder="What are you looking for?">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>
-            <div class="d-inline-flex gap-3">
+            <div class="d-inline-flex align-items-center gap-3">
                 <div class="button">
                     <button type="button" class="btn btn-success">Cart</button>
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Profile photo
+                    <button class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="../Provider/images/Mr_Oso.jpeg" class="avatar">
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="../Provider/Profile.html">Profile</a></li>
                         <li><a class="dropdown-item" href="#">Another action</a></li>
                         <li><a class="dropdown-item" href="#">Something else here</a></li>
                     </ul>
