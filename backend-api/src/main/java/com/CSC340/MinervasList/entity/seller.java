@@ -13,7 +13,7 @@ public class Seller extends User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sellerId;
+    private Long SellerId;
 
     @Column(nullable = false)
     private String businessName;
@@ -28,23 +28,16 @@ public class Seller extends User {
 
     public Seller(Long id, String businessName, String email, String password) {
         super(email, password);
-        this.sellerId = id;
+        this.SellerId = id;
         this.businessName = businessName;
     }
 
-    public Long getId() {
-        return sellerId;
-    }
-
-    public void setId(Long id) {
-        this.sellerId = id;
-    }
 
     public String getBusiness() {
         return businessName;
     }
 
-    public void getBusiness(String businessName) {
+    public void setBusiness(String businessName) {
         this.businessName = businessName;
     }
 }

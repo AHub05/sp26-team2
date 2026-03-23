@@ -1,5 +1,5 @@
 package com.CSC340.MinervasList.entity;
 
-public class review {
+public class Review {
     
 }
