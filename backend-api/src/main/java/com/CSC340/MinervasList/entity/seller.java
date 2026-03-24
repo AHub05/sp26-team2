@@ -1,16 +1,20 @@
 package com.CSC340.MinervasList.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Sellers")
+@Data
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
 public class Seller {
 
     @Id
@@ -24,41 +28,9 @@ public class Seller {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    public Seller() {
-    }
+    @OneToMany(mappedBy = "Sellers", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("Sellers")
+    private List<Listing> listings;
 
-    public Seller(String businessName, User user) {
-        this.businessName = businessName;
-        this.user = user;
-    }
-
-    public Seller(Long sellerId, String businessName, User user) {
-        this.sellerId = sellerId;
-        this.businessName = businessName;
-        this.user = user;
-    }
-
-    public Long getSellerId() {
-        return sellerId;
-    }
-
-    public void setSellerId(Long sellerId) {
-        this.sellerId = sellerId;
-    }
-
-    public String getBusinessName() {
-        return businessName;
-    }
-
-    public void setBusinessName(String businessName) {
-        this.businessName = businessName;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
+    
 }

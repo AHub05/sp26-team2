@@ -38,7 +38,7 @@ public class Listing {
     private Seller seller;
 
     @Column(nullable = false)
-    private String title;
+    private String name;
 
     @Column(columnDefinition = "TEXT")
     private String description;
