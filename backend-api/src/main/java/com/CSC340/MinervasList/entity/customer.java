@@ -13,7 +13,7 @@ public class Customer extends User {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long customerId;
+    private Long CustomerId;
 
     @Column(nullable = false)
     private String name;
@@ -28,16 +28,17 @@ public class Customer extends User {
 
     public Customer(Long id, String name, String email, String password) {
         super(email, password);
-        this.customerId = id;
+        this.CustomerId = id;
         this.name = name;
     }
-
+@Override
     public Long getId() {
-        return customerId;
+        return CustomerId;
     }
 
+    @Override
     public void setId(Long id) {
-        this.customerId = id;
+        this.CustomerId = id;
     }
 
     public String getName() {

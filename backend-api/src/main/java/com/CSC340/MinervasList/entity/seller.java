@@ -31,7 +31,14 @@ public class Seller extends User {
         this.SellerId = id;
         this.businessName = businessName;
     }
-
+@Override
+    public Long getId() {
+        return SellerId;
+    }
+@Override
+    public void setId(Long id) {
+        this.SellerId = id;
+    }
 
     public String getBusiness() {
         return businessName;
