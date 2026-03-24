@@ -34,14 +34,13 @@ public class User {
         this.email = email;
         this.password = password;
     }
+public Long getUserId() {
+    return userId;
+}
 
-    public Long getId() {
-        return userId;
-    }
-
-    public void setId(Long id) {
-        this.userId = id;
-    }
+public void setUserId(Long userId) {
+    this.userId = userId;
+}
 
     public String getEmail() {
         return email;

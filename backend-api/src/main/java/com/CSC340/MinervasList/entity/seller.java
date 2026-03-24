@@ -5,46 +5,60 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Sellers")
-public class Seller extends User {
+public class Seller {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long SellerId;
+    private Long sellerId;
 
     @Column(nullable = false)
     private String businessName;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
+
     public Seller() {
     }
 
-    public Seller(String businessName, String email, String password) {
-        super(email, password);
+    public Seller(String businessName, User user) {
         this.businessName = businessName;
+        this.user = user;
     }
 
-    public Seller(Long id, String businessName, String email, String password) {
-        super(email, password);
-        this.SellerId = id;
+    public Seller(Long sellerId, String businessName, User user) {
+        this.sellerId = sellerId;
         this.businessName = businessName;
-    }
-@Override
-    public Long getId() {
-        return SellerId;
-    }
-@Override
-    public void setId(Long id) {
-        this.SellerId = id;
+        this.user = user;
     }
 
-    public String getBusiness() {
+    public Long getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(Long sellerId) {
+        this.sellerId = sellerId;
+    }
+
+    public String getBusinessName() {
         return businessName;
     }
 
-    public void setBusiness(String businessName) {
+    public void setBusinessName(String businessName) {
         this.businessName = businessName;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

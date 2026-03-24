@@ -28,12 +28,10 @@ public class Purchase {
     @Column(nullable = false)
     private LocalDateTime purchaseDate;
 
-    // Who bought it
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    // What was purchased
     @ManyToOne
     @JoinColumn(name = "listing_id", nullable = false)
     private Listing listing;
@@ -50,12 +48,12 @@ public class Purchase {
         this.purchaseDate = LocalDateTime.now();
     }
 
-    public Long getId() {
+    public Long getPurchaseId() {
         return purchaseId;
     }
 
-    public void setId(Long id) {
-        this.purchaseId = id;
+    public void setPurchaseId(Long purchaseId) {
+        this.purchaseId = purchaseId;
     }
 
     public int getQuantity() {
@@ -78,6 +76,10 @@ public class Purchase {
         return purchaseDate;
     }
 
+    public void setPurchaseDate(LocalDateTime purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
     public Customer getCustomer() {
         return customer;
     }
@@ -94,4 +96,3 @@ public class Purchase {
         this.listing = listing;
     }
 }
-
