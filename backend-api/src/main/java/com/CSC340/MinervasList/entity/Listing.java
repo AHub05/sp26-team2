@@ -98,11 +98,11 @@ public class Listing {
     }
 
     public String getTitle() {
-        return title;
+        return name;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.name = title;
     }
 
     public String getDescription() {
