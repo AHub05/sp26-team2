@@ -17,15 +17,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "listings")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Listing {
 
     @Id
@@ -67,6 +61,108 @@ public class Listing {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    // ===== Constructors =====
+
+    public Listing() {
+    }
+
+    public Listing(Seller seller, String title, String description,
+                   Category category, ItemCondition itemCondition,
+                   BigDecimal price, Integer quantity, ListingStatus status) {
+        this.seller = seller;
+        this.name = title;
+        this.description = description;
+        this.category = category;
+        this.itemCondition = itemCondition;
+        this.price = price;
+        this.quantity = quantity;
+        this.status = status;
+    }
+
+    // ===== Getters & Setters =====
+
+    public Long getListingId() {
+        return listingId;
+    }
+
+    public void setListingId(Long listingId) {
+        this.listingId = listingId;
+    }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public ItemCondition getItemCondition() {
+        return itemCondition;
+    }
+
+    public void setItemCondition(ItemCondition itemCondition) {
+        this.itemCondition = itemCondition;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
+    public ListingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ListingStatus status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    // ===== Lifecycle Hooks =====
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -80,6 +176,8 @@ public class Listing {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // ===== Enums =====
 
     public enum ListingStatus {
         AVAILABLE, PENDING, SOLD, ARCHIVED
