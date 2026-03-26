@@ -16,8 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class Seller extends User {
 
-    @Column(nullable = false)
-    private String businessName;
+    @Column(name = "business_name")
+private String businessName;
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("seller")

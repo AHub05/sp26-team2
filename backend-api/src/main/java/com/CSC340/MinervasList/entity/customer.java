@@ -8,8 +8,8 @@ import jakarta.persistence.Entity;
 @DiscriminatorValue("CUSTOMER")
 public class Customer extends User {
 
-    @Column(nullable = false)
-    private String name;
+    @Column(name = "name")
+private String name;
 
     public Customer() {
     }
