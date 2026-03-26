@@ -46,12 +46,12 @@ public class Review {
         this.seller = seller;
     }
 
-    public Long getId() {
+    public Long getReviewId() {
         return reviewId;
     }
 
-    public void setId(Long id) {
-        this.reviewId = id;
+    public void setReviewId(Long reviewId) {
+        this.reviewId = reviewId;
     }
 
     public int getRating() {
