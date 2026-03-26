@@ -32,7 +32,7 @@ public class Listing {
     private Seller seller;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
     @Column(columnDefinition = "TEXT")
     private String description;
@@ -70,7 +70,7 @@ public class Listing {
                    Category category, ItemCondition itemCondition,
                    BigDecimal price, Integer quantity, ListingStatus status) {
         this.seller = seller;
-        this.name = title;
+        this.title = title;
         this.description = description;
         this.category = category;
         this.itemCondition = itemCondition;
@@ -98,11 +98,11 @@ public class Listing {
     }
 
     public String getTitle() {
-        return name;
+        return title;
     }
 
     public void setTitle(String title) {
-        this.name = title;
+        this.title = title;
     }
 
     public String getDescription() {
