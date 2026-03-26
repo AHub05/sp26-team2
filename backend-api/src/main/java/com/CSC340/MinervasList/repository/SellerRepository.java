@@ -9,9 +9,9 @@ import com.CSC340.MinervasList.entity.Seller;
 
 public interface SellerRepository extends JpaRepository<Seller, Long> {
 
-    Optional<Seller> findByUserUserId(Long userId);
+    Optional<Seller> findByUserId(Long userId);
 
-    boolean existsByUserUserId(Long userId);
+    boolean existsByUserId(Long userId);
 
     List<Seller> findByBusinessNameContainingIgnoreCase(String businessName);
 }

@@ -36,8 +36,8 @@ public class PurchaseService {
                 .orElseThrow(() -> new RuntimeException("Purchase not found with ID: " + purchaseId));
     }
 
-    public List<Purchase> getPurchasesByCustomerId(Long customerId) {
-        return purchaseRepository.findByCustomerCustomerId(customerId);
+    public List<Purchase> getPurchasesByCustomerId(Long userId) {
+        return purchaseRepository.findByCustomerUserId(userId);
     }
 
     public List<Purchase> getPurchasesByListingId(Long listingId) {
@@ -45,7 +45,7 @@ public class PurchaseService {
     }
 
     public Purchase createPurchase(Purchase purchase) {
-        if (purchase.getCustomer() == null || purchase.getCustomer().getCustomerId() == null) {
+        if (purchase.getCustomer() == null || purchase.getCustomer().getUserId() == null) {
             throw new RuntimeException("Purchase must be linked to an existing customer.");
         }
 
@@ -57,11 +57,11 @@ public class PurchaseService {
             throw new RuntimeException("Quantity must be greater than 0.");
         }
 
-        Long customerId = purchase.getCustomer().getCustomerId();
+        Long userId = purchase.getCustomer().getUserId();
         Long listingId = purchase.getListing().getListingId();
 
-        Customer existingCustomer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + customerId));
+        Customer existingCustomer = customerRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + userId));
 
         Listing existingListing = listingRepository.findById(listingId)
                 .orElseThrow(() -> new RuntimeException("Listing not found with ID: " + listingId));
@@ -83,11 +83,11 @@ public class PurchaseService {
 
         existingPurchase.setTotalPrice(updatedPurchase.getTotalPrice());
 
-        if (updatedPurchase.getCustomer() != null && updatedPurchase.getCustomer().getCustomerId() != null) {
-            Long customerId = updatedPurchase.getCustomer().getCustomerId();
+        if (updatedPurchase.getCustomer() != null && updatedPurchase.getCustomer().getUserId() != null) {
+            Long userId = updatedPurchase.getCustomer().getUserId();
 
-            Customer existingCustomer = customerRepository.findById(customerId)
-                    .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + customerId));
+            Customer existingCustomer = customerRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Customer not found with ID: " + userId));
 
             existingPurchase.setCustomer(existingCustomer);
         }

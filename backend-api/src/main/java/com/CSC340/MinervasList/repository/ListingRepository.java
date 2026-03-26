@@ -1,16 +1,17 @@
 package com.CSC340.MinervasList.repository;
 
-import com.CSC340.MinervasList.entity.Listing;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import com.CSC340.MinervasList.entity.Listing;
 
 @Repository
 public interface ListingRepository extends JpaRepository<Listing, Long> {
 
-    List<Listing> findByName(String name);
+    List<Listing> findByTitle(String title);
 
     @Query(value = "SELECT l.* FROM listings l WHERE l.seller_id = :sellerId", nativeQuery = true)
     List<Listing> findBySellerId(Long id);
