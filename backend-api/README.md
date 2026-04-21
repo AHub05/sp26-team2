@@ -6,3 +6,4 @@ This is the README file for the backend API. Use this file to provide informatio
 ![UML Class Diagram](../docs/MinervasListUML_Paper.jpg)
 
 ## API Endpoints
+Endpoints
