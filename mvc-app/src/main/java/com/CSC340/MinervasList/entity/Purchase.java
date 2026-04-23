@@ -1,4 +1,4 @@
-package main.java.com.CSC340.MinervasList.entity;
+package com.CSC340.MinervasList.entity;
 
 import java.time.LocalDateTime;
 
