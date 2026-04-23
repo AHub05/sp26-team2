@@ -1,4 +1,4 @@
-package main.java.com.CSC340.MinervasList.repository;
+package com.CSC340.MinervasList.repository;
 
 import java.util.List;
 import java.util.Optional;

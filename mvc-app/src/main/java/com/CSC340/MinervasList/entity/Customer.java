@@ -1,4 +1,4 @@
-package main.java.com.CSC340.MinervasList.entity;
+package com.CSC340.MinervasList.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
@@ -9,9 +9,10 @@ import jakarta.persistence.Entity;
 public class Customer extends User {
 
     @Column(name = "name")
-private String name;
+    private String name;
 
     public Customer() {
+        super();
     }
 
     public Customer(String name, String email, String password) {
