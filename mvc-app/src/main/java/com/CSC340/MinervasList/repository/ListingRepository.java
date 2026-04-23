@@ -1,9 +1,10 @@
-package main.java.com.CSC340.MinervasList.repository;
+package com.CSC340.MinervasList.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.CSC340.MinervasList.entity.Listing;
@@ -13,16 +14,16 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
 
     List<Listing> findByTitle(String title);
 
-    @Query(value = "SELECT l.* FROM listings l WHERE l.seller_id = :sellerId", nativeQuery = true)
-    List<Listing> findBySellerId(Long id);
+    @Query("SELECT l FROM Listing l WHERE l.seller.userId = :sellerId")
+    List<Listing> findBySellerId(@Param("sellerId") Long sellerId);
 
-    @Query(value = "SELECT l.* FROM listing l WHERE l.category = :category", nativeQuery = true)
-    List<Listing> findByCategory(String category);
+    @Query("SELECT l FROM Listing l WHERE l.category = :category")
+    List<Listing> findByCategory(@Param("category") Listing.Category category);
 
-    @Query(value = "SELECT l.* FROM listing l WHERE l.itemCondition = :itemCondition", nativeQuery = true)
-    List<Listing> findByItemCondition(String condtion);
+    @Query("SELECT l FROM Listing l WHERE l.itemCondition = :itemCondition")
+    List<Listing> findByItemCondition(@Param("itemCondition") Listing.ItemCondition itemCondition);
 
-    @Query(value = "SELECT l.* FROM listing l WHERE l.status = :status", nativeQuery = true)
-    List<Listing> findByStatus(String status);
+    @Query("SELECT l FROM Listing l WHERE l.status = :status")
+    List<Listing> findByStatus(@Param("status") Listing.ListingStatus status);
 
 }
