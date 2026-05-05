@@ -70,6 +70,11 @@ public class ListingService {
         return listingRepository.save(existing);
     }
 
+    public void deleteSellerListing(Long sellerId, Long listingId) {
+        Listing listing = getSellerListing(sellerId, listingId);
+        listingRepository.delete(listing);
+    }
+
     public void deleteListing(Long id) {
         listingRepository.deleteById(id);
     }

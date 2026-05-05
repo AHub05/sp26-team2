@@ -1,5 +1,7 @@
 package com.CSC340.MinervasList.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +34,12 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     private Seller seller;
+
+    @Column(name = "seller_reply", length = 1000)
+    private String sellerReply;
+
+    @Column(name = "replied_at")
+    private LocalDateTime repliedAt;
 
     public Review() {
     }
@@ -81,5 +89,21 @@ public class Review {
 
     public void setSeller(Seller seller) {
         this.seller = seller;
+    }
+
+    public String getSellerReply() {
+        return sellerReply;
+    }
+
+    public void setSellerReply(String sellerReply) {
+        this.sellerReply = sellerReply;
+    }
+
+    public LocalDateTime getRepliedAt() {
+        return repliedAt;
+    }
+
+    public void setRepliedAt(LocalDateTime repliedAt) {
+        this.repliedAt = repliedAt;
     }
 }

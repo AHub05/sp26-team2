@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.CSC340.MinervasList.dto.ReviewReplyRequest;
 import com.CSC340.MinervasList.entity.Review;
 import com.CSC340.MinervasList.service.ReviewService;
 
@@ -86,5 +87,16 @@ public class ReviewController {
         }
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{reviewId}/seller/{sellerId}/reply")
+    public ResponseEntity<Review> replyToReview(@PathVariable Long reviewId,
+                                                @PathVariable Long sellerId,
+                                                @RequestBody ReviewReplyRequest request) {
+        try {
+            return ResponseEntity.ok(reviewService.replyToReview(reviewId, sellerId, request));
+        } catch (RuntimeException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

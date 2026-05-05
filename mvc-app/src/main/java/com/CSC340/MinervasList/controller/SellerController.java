@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.CSC340.MinervasList.dto.SellerStatsDto;
 import com.CSC340.MinervasList.entity.Seller;
 import com.CSC340.MinervasList.service.SellerService;
 
@@ -39,7 +40,7 @@ public class SellerController {
 
     @GetMapping("/user/{userId}")
     public Seller getSellerByUserId(@PathVariable Long userId) {
-        return sellerService.getSellerById(userId);
+        return sellerService.getSellerByUserId(userId);
     }
 
     @GetMapping("/search")
@@ -61,5 +62,10 @@ public class SellerController {
     public String deleteSeller(@PathVariable Long sellerId) {
         sellerService.deleteSeller(sellerId);
         return "Seller deleted successfully.";
+    }
+
+    @GetMapping("/{sellerId}/stats")
+    public SellerStatsDto getSellerStats(@PathVariable Long sellerId) {
+        return sellerService.getSellerStats(sellerId);
     }
 }

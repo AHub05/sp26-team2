@@ -1,10 +1,12 @@
 package com.CSC340.MinervasList.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.CSC340.MinervasList.dto.ReviewReplyRequest;
 import com.CSC340.MinervasList.entity.Customer;
 import com.CSC340.MinervasList.entity.Review;
 import com.CSC340.MinervasList.entity.Seller;
@@ -80,5 +82,17 @@ public class ReviewService {
 
         reviewRepository.deleteById(reviewId);
         return true;
+    }
+
+    public Review replyToReview(Long reviewId, Long sellerId, ReviewReplyRequest request) {
+        sellerRepository.findById(sellerId)
+                .orElseThrow(() -> new RuntimeException("Seller not found with ID: " + sellerId));
+
+        Review review = reviewRepository.findByReviewIdAndSellerUserId(reviewId, sellerId)
+                .orElseThrow(() -> new RuntimeException("Review not found for seller with ID: " + sellerId));
+
+        review.setSellerReply(request.getSellerReply());
+        review.setRepliedAt(LocalDateTime.now());
+        return reviewRepository.save(review);
     }
 }

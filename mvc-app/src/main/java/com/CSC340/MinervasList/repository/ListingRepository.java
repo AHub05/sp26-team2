@@ -26,4 +26,8 @@ public interface ListingRepository extends JpaRepository<Listing, Long> {
     @Query("SELECT l FROM Listing l WHERE l.status = :status")
     List<Listing> findByStatus(@Param("status") Listing.ListingStatus status);
 
+    long countBySellerUserId(Long sellerId);
+
+    long countBySellerUserIdAndStatus(Long sellerId, Listing.ListingStatus status);
+
 }

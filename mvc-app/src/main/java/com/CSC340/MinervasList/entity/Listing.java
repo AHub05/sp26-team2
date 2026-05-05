@@ -161,7 +161,6 @@ public class Listing {
         return updatedAt;
     }
 
-    // ===== Lifecycle Hooks =====
 
     @PrePersist
     protected void onCreate() {

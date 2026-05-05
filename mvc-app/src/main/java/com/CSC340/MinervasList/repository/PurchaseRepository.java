@@ -13,4 +13,6 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     List<Purchase> findByCustomerUserId(Long userId);
 
     List<Purchase> findByListingListingId(Long listingId);
+
+    long countByListingSellerUserId(Long sellerId);
 }
