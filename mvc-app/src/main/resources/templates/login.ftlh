@@ -38,7 +38,7 @@
                                     href="#customer">Customer</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="farmer-tab" data-bs-toggle="tab" href="#seller">Farmer</a>
+                                <a class="nav-link" id="farmer-tab" data-bs-toggle="tab" href="#seller">Seller</a>
                             </li>
                         </ul>
                     </div>
@@ -62,11 +62,11 @@
                                     <a href="/customer/signup">Need an account? Sign up as a customer</a>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="farmer">
+                            <div class="tab-pane fade" id="seller">
                                 <h3 class="card-title mb-4">Seller Sign In</h3>
-                                <form action="/farmer/signin" method="post">
+                                <form action="/seller/signin" method="post">
                                     <div class="mb-3">
-                                        <label for="farmerEmail" class="form-label">Email</label>
+                                        <label for="sellerEmail" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="farmerEmail" name="email" required>
                                     </div>
                                     <div class="mb-3">
