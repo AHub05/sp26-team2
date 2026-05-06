@@ -1,5 +1,5 @@
 <#macro renderNavbar userType="guest">
-    <nav class="navbar navbar-expand-lg bg-boddy-tertiary mb-4">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-5">
         <div class="container">
             <a class="navbar-brand" href="/">Minerva's List</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

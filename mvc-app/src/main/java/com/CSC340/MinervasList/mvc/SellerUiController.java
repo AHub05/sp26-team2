@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.CSC340.MinervasList.entity.Customer;
 import com.CSC340.MinervasList.entity.Listing;
 import com.CSC340.MinervasList.entity.Seller;
 import com.CSC340.MinervasList.service.ListingService;
@@ -27,6 +28,18 @@ public class SellerUiController {
     public SellerUiController(ListingService listingService, SellerService sellerService) {
         this.listingService = listingService;
         this.sellerService = sellerService;
+    }
+
+    @GetMapping("/signup")
+    public String signup(Model model) {
+        model.addAttribute("seller", new Seller());
+        return "signup";
+    }
+
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute Seller seller) {
+        sellerService.createSeller(seller);
+        return "redirect:/login";
     }
 
     @GetMapping("/listings")

@@ -76,10 +76,9 @@
                   </div>
                   <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="passwordHash" name="passwordHash" required>
+                    <input type="password" class="form-control" id="password" name="password" required>
                   </div>
                   <input type="text" id="role" name="role" value="SELLER" hidden>
-                  <input type="text" id="status" name="status" value="ACTIVE" hidden>
                   <button type="submit" class="btn btn-success">Sign Up</button>
                 </form>
               </div>

@@ -9,26 +9,23 @@
 <body>
     <#include "/fragments/navbar.ftlh">
     <@renderNavbar userType="customer" />
-    <p>Customer Profile Page</p>
 
     <div class="container">
         <div class="card">
             <div class="row g-0">
                 <div class="col-sm-4">
                     <div class="card-body">
-                        <img src="https://placehold.co/200" class="img rounded-circle" alt="...">
+                        <img src="https://placehold.co/200" class="img rounded-circle mx-auto d-block w-25" alt="${customer.name}'s profile photo">
                     </div>
                 </div>
-                <div class="col-sm-8">
-                    <div class="card-body">
-                        <h5 class="card-title">${customer.name}</h5>
-                    </div>
+                <div class="col-sm-8 d-flex align-items-center">
+                    <h5 class="card-title">${customer.name}</h5>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
+    <div class="container mt-5">
         <h1>Purchases</h1>
     </div>
 
