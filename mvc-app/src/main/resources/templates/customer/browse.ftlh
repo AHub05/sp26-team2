@@ -13,7 +13,7 @@
     <h1>Listings</h1>
 
     <#list productListings as listing>
-        <a href="#">
+        <a href="/customer/shop/${listing.listingId}">
             <div class="col">
                 <div class="card shadow-sm">
                     <div class="card-body">

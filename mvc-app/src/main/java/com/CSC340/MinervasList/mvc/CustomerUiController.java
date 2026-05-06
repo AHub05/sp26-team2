@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -99,6 +100,18 @@ public class CustomerUiController {
         model.addAttribute("customer", customer);
         return "customer/profile-page";
     }
+
+    @GetMapping("/shop/{listingId}")
+    public String productListing(@PathVariable long listingId, Model model) {
+        Listing listing = listingService.getListingById(listingId);
+        if (listing != null) {
+            model.addAttribute("listing", listing);
+            return "customer/item-listing";
+        }
+
+        return "custome/browse";
+    }
+
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
