@@ -36,6 +36,16 @@ public class CustomerUiController {
     @Autowired
     private ListingService listingService;
 
+    @GetMapping("/home")
+    public String home(HttpSession session, Model model) {
+        Long customerId = (Long)session.getAttribute("customerId");
+        if(customerId == null) {
+            return "redirect:/home";
+        }
+
+        return "customer/home";
+    }
+
     @GetMapping("/signup")
     public String signup(Model model) {
         model.addAttribute("customer", new Customer());
@@ -72,6 +82,28 @@ public class CustomerUiController {
         List<Listing> allListings = listingService.getAllListings();
         model.addAttribute("productListings", allListings);
         return "customer/browse";
+    }
+
+    @GetMapping("/profile")
+    public String profilePage(HttpSession session, Model model) {
+        Long customerId = (Long)session.getAttribute("customerId");
+        if(customerId == null) {
+            return "redirect:/login";
+        }
+
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer == null) {
+            return "redirect:/login";
+        }
+
+        model.addAttribute("customer", customer);
+        return "customer/profile-page";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
     }
 
 }

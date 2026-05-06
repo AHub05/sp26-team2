@@ -11,7 +11,7 @@
 <body>
     <!-- Navbar -->
     <#include "/fragments/navbar.ftlh">
-    <@renderNavbar userType="guest" />
+    <@renderNavbar userType="customer" />
 
     <!-- Content -->
     <section class="hero">
