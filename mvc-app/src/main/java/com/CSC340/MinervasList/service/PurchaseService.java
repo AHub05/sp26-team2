@@ -37,7 +37,7 @@ public class PurchaseService {
     }
 
     public List<Purchase> getPurchasesByCustomerId(Long userId) {
-        return purchaseRepository.findByCustomerUserId(userId);
+        return purchaseRepository.findByUserId(userId);
     }
 
     public List<Purchase> getPurchasesByListingId(Long listingId) {

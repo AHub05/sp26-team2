@@ -1,5 +1,6 @@
 package com.CSC340.MinervasList.mvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.CSC340.MinervasList.entity.Customer;
 import com.CSC340.MinervasList.entity.Listing;
+import com.CSC340.MinervasList.entity.Purchase;
 import com.CSC340.MinervasList.service.CustomerService;
 import com.CSC340.MinervasList.service.ListingService;
 import com.CSC340.MinervasList.service.PurchaseService;
@@ -97,7 +99,11 @@ public class CustomerUiController {
             return "redirect:/login";
         }
 
+        List<Purchase> purchases = purchaseService.getPurchasesByCustomerId(customer.getUserId());
+        
+        model.addAttribute("purchases", purchases);
         model.addAttribute("customer", customer);
+
         return "customer/profile-page";
     }
 
@@ -112,6 +118,29 @@ public class CustomerUiController {
         return "custome/browse";
     }
 
+    @PostMapping("/shop/{listingId}/purchase")
+    public String purchaseProduct(HttpSession session, @PathVariable long listingId, @RequestParam Double quantity) {
+        Long customerId = (Long)session.getAttribute("customerId");
+        if (customerId == null) {
+            return "redirect:/login";
+        }
+
+        Customer customer = customerService.getCustomerById(customerId);
+        Listing listing = listingService.getListingById(listingId);
+        if (customer == null || listing == null) {
+            return "redirect:/customer/browse";
+        }
+
+        Purchase purchase = new Purchase();
+        purchase.setQuantity(quantity.intValue());
+        purchase.setTotalPrice(listing.getPrice().doubleValue() * quantity);
+        purchase.setPurchaseDate(LocalDateTime.now());
+        purchase.setCustomer(customer);
+        purchase.setListing(listing);
+        purchaseService.createPurchase(purchase);
+
+        return "redirect:/customer/profile?success";
+    }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
