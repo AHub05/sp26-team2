@@ -8,24 +8,8 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-4">
-        <div class="container">
-            <a class="navbar-brand" href="/">Minerva's List</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Log In</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>   
+    <#include "/fragments/navbar.ftlh">
+    <@renderNavbar userType="guest" />
 
     <!-- Login/Signup -->
     <div class="container">
@@ -65,10 +49,11 @@
               </div>
               <div class="tab-pane fade" id="seller">
                 <h3 class="card-title mb-4">Seller Sign Up</h3>
-                <form action="/seller/signup" method="post">
+                <div id="seller-alert" class="alert d-none" role="alert"></div>
+                <form action="/seller/signup" method="post" enctype="multipart/form-data">
                   <div class="mb-3">
                     <label for="name" class="form-label">Business Name</label>
-                    <input type="text" class="form-control" id="business" name="business" required>
+                    <input type="text" class="form-control" id="businessName" name="businessName" required>
                   </div>
                   <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
@@ -78,7 +63,19 @@
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                   </div>
-                  <input type="text" id="role" name="role" value="SELLER" hidden>
+                  <div class="mb-3">
+                    <label for="profilePhoto" class="form-label">Profile Photo</label>
+                    <input type="file" class="form-control" id="profilePhoto" name="profilePhoto" accept="image/*">
+                    <div class="form-text">Use an image under 10MB for now.</div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="bio" class="form-label">Bio</label>
+                    <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="servicesOffered" class="form-label">Services Offered</label>
+                    <textarea class="form-control" id="servicesOffered" name="servicesOffered" rows="3"></textarea>
+                  </div>
                   <button type="submit" class="btn btn-success">Sign Up</button>
                 </form>
               </div>
@@ -88,7 +85,23 @@
       </div>
     </div>
 
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      (function () {
+        const params = new URLSearchParams(window.location.search);
+        const sellerTabTrigger = document.querySelector('a[href="#seller"]');
+        const sellerAlert = document.getElementById('seller-alert');
+
+        if (!sellerTabTrigger || !sellerAlert) {
+          return;
+        }
+
+        if (params.get('error') === 'seller' && window.bootstrap) {
+          bootstrap.Tab.getOrCreateInstance(sellerTabTrigger).show();
+          sellerAlert.className = 'alert alert-danger';
+          sellerAlert.textContent = 'Seller sign-up failed. Check your email, password, and photo size.';
+        }
+      }());
+    </script>
 </body>
 </html>

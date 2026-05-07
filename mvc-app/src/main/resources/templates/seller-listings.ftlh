@@ -1,4 +1,4 @@
-c<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +16,7 @@ c<!doctype html>
             --brand: #146c5f;
             --brand-dark: #0f554b;
             --accent: #b34a35;
+            --soft: #eef3f1;
         }
 
         * {
@@ -31,7 +32,7 @@ c<!doctype html>
         main {
             width: min(1120px, calc(100% - 32px));
             margin: 0 auto;
-            padding: 32px 0 48px;
+            padding: 0 0 48px;
         }
 
         header {
@@ -40,6 +41,8 @@ c<!doctype html>
             justify-content: space-between;
             gap: 16px;
             margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--line);
         }
 
         h1 {
@@ -76,6 +79,7 @@ c<!doctype html>
             justify-content: space-between;
             gap: 16px;
             margin-bottom: 16px;
+            border-top: 4px solid var(--brand);
         }
 
         form {
@@ -164,7 +168,7 @@ c<!doctype html>
         th {
             color: var(--muted);
             font-size: 13px;
-            background: #eef3f1;
+            background: var(--soft);
         }
 
         tr:last-child td {
@@ -177,6 +181,29 @@ c<!doctype html>
 
         .actions {
             text-align: right;
+        }
+
+        .listing-thumb {
+            width: 128px;
+            height: 86px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        .listing-thumb-empty {
+            width: 128px;
+            height: 86px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            color: var(--muted);
+            background: #f8f9fa;
+            font-size: 13px;
         }
 
         @media (max-width: 760px) {
@@ -218,95 +245,75 @@ c<!doctype html>
     </style>
 </head>
 <body>
+<#include "/fragments/navbar.ftlh">
+<@renderNavbar userType="seller" />
 <main>
     <header>
         <div>
             <h1>Seller Listings</h1>
-            <#if selectedSeller??>
-                <p class="muted">${selectedSeller.businessName!"Seller"} · ID ${selectedSeller.userId}</p>
-            </#if>
+            <p class="muted">${seller.businessName!"Seller"} · ID ${seller.userId}</p>
         </div>
-        <#if selectedSellerId??>
-            <a class="button" href="/seller/listings/new?sellerId=${selectedSellerId}">+ New Listing</a>
-        </#if>
+        <a class="button" href="/seller/listings/new">+ New Listing</a>
     </header>
 
     <section class="toolbar">
-        <form class="seller-select" method="get" action="/seller/listings">
+        <div class="seller-select">
             <div>
-                <label for="sellerId">Seller</label>
-                <select id="sellerId" name="sellerId" required>
-                    <option value="">Select seller</option>
-                    <#list sellers as seller>
-                        <option value="${seller.userId}" <#if selectedSellerId?? && selectedSellerId == seller.userId>selected</#if>>
-                            ${seller.businessName!"Seller"} (#${seller.userId})
-                        </option>
-                    </#list>
-                </select>
+                <label>Seller</label>
+                <input value="${seller.businessName!"Seller"} (#${seller.userId})" disabled>
             </div>
-            <button type="submit">View Listings</button>
-        </form>
+            <div>
+                <label>Stats</label>
+                <input value="${stats.totalListings} total | ${stats.activeListings} active | ${stats.totalReviews} reviews" disabled>
+            </div>
+        </div>
     </section>
 
-    <#if sellers?size == 0>
-        <section class="setup">
-            <h2>Demo Seller</h2>
-            <form class="setup-grid" method="post" action="/seller/demo-seller">
-                <div>
-                    <label for="businessName">Business name</label>
-                    <input id="businessName" name="businessName" value="Minerva Demo Shop" required>
-                </div>
-                <div>
-                    <label for="email">Email</label>
-                    <input id="email" name="email" type="email" value="seller@minervaslist.demo" required>
-                </div>
-                <div>
-                    <label for="password">Password</label>
-                    <input id="password" name="password" value="password" required>
-                </div>
-                <button type="submit">Create Seller</button>
-            </form>
-        </section>
-    <#elseif selectedSellerId??>
-        <#if listings?size == 0>
-            <section class="empty">
-                <p class="muted">No listings yet.</p>
-                <a class="button" href="/seller/listings/new?sellerId=${selectedSellerId}">+ New Listing</a>
-            </section>
-        <#else>
-            <table>
-                <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Condition</th>
-                    <th>Price</th>
-                    <th>Qty</th>
-                    <th>Status</th>
-                    <th class="actions">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <#list listings as listing>
-                    <tr>
-                        <td>${listing.title}</td>
-                        <td>${listing.category}</td>
-                        <td>${listing.itemCondition}</td>
-                        <td>$${listing.price}</td>
-                        <td>${listing.quantity}</td>
-                        <td>${listing.status}</td>
-                        <td class="actions">
-                            <a class="button secondary" href="/seller/listings/${listing.listingId}/edit?sellerId=${selectedSellerId}">Edit</a>
-                        </td>
-                    </tr>
-                </#list>
-                </tbody>
-            </table>
-        </#if>
-    <#else>
+    <#if listings?size == 0>
         <section class="empty">
-            <p class="muted">Select a seller.</p>
+            <p class="muted">No listings yet.</p>
+            <a class="button" href="/seller/listings/new">+ New Listing</a>
         </section>
+    <#else>
+        <table>
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Photo</th>
+                <th>Category</th>
+                <th>Condition</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Status</th>
+                <th class="actions">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <#list listings as listing>
+                <tr>
+                    <td>${listing.title}</td>
+                    <td>
+                        <#if listing.hasStoredPhoto()>
+                            <img class="listing-thumb" src="/seller/listings/${listing.listingId}/photo" alt="${listing.title} photo">
+                        <#else>
+                            <div class="listing-thumb-empty">No photo</div>
+                        </#if>
+                    </td>
+                    <td>${listing.category}</td>
+                    <td>${listing.itemCondition}</td>
+                    <td>$${listing.price}</td>
+                    <td>${listing.quantity}</td>
+                    <td>${listing.status}</td>
+                    <td class="actions">
+                        <a class="button secondary" href="/seller/listings/${listing.listingId}/edit">Edit</a>
+                        <form method="post" action="/seller/listings/${listing.listingId}/delete" style="display:inline">
+                            <button class="button danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </#list>
+            </tbody>
+        </table>
     </#if>
 </main>
 </body>

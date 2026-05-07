@@ -37,6 +37,12 @@ public class Listing {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "photo_data", columnDefinition = "bytea")
+    private byte[] photoData;
+
+    @Column(name = "photo_content_type")
+    private String photoContentType;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -111,6 +117,26 @@ public class Listing {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public byte[] getPhotoData() {
+        return photoData;
+    }
+
+    public void setPhotoData(byte[] photoData) {
+        this.photoData = photoData;
+    }
+
+    public String getPhotoContentType() {
+        return photoContentType;
+    }
+
+    public void setPhotoContentType(String photoContentType) {
+        this.photoContentType = photoContentType;
+    }
+
+    public boolean hasStoredPhoto() {
+        return photoData != null && photoData.length > 0;
     }
 
     public Category getCategory() {

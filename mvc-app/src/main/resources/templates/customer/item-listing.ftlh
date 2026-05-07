@@ -6,6 +6,28 @@
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <style>
+        .item-photo {
+            width: min(100%, 520px);
+            height: 420px;
+            object-fit: cover;
+            display: block;
+            background: #f8f9fa;
+        }
+
+        .item-photo-empty {
+            width: min(100%, 520px);
+            height: 420px;
+            background: #f8f9fa;
+        }
+
+        @media (max-width: 768px) {
+            .item-photo,
+            .item-photo-empty {
+                height: 300px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -17,13 +39,20 @@
 
             <!-- Item Picture -->
             <div class="col">
-                <img src="https://placehold.co/400" class="col mx-auto d-block">
+                <#if listing.hasStoredPhoto()>
+                    <img src="/seller/listings/${listing.listingId}/photo" class="item-photo rounded border mx-auto" alt="${listing.title}">
+                <#else>
+                    <div class="item-photo-empty border rounded d-flex align-items-center justify-content-center mx-auto">
+                        <span class="text-muted">No image uploaded</span>
+                    </div>
+                </#if>
             </div>
 
             <!-- Item Information -->
             <div class="col">
                 <h2>${listing.title}</h2>
                 <h1>$${listing.price}</h1> 
+                <p class="text-muted mb-2">${listing.quantity} available · ${listing.status}</p>
                 <hr>
                 <p>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-award"
@@ -50,8 +79,15 @@
                         <div class="row g-0">
                             <div class="col-sm-4">
                                 <div class="card-body">
-                                    <img src="https://placehold.co/200" class="img rounded-circle mx-auto d-block w-25"
-                                        alt="${listing.seller.businessName}'s profile photo">
+                                    <#if listing.seller.hasStoredProfilePhoto()>
+                                        <img src="/seller/photo/${listing.seller.userId}" class="img rounded-circle mx-auto d-block"
+                                            alt="${listing.seller.businessName}'s profile photo" style="width:80px; height:80px; object-fit:cover;">
+                                    <#else>
+                                        <div class="rounded-circle mx-auto d-flex align-items-center justify-content-center"
+                                            style="width:80px; height:80px; background:#eceff1; color:#5f6368; font-weight:700;">
+                                            ${listing.seller.businessName?has_content?then(listing.seller.businessName?substring(0, 1)?upper_case, "S")}
+                                        </div>
+                                    </#if>
                                 </div>
                             </div>
                             <div class="col-sm-8 d-flex align-items-center">
@@ -60,16 +96,19 @@
                         </div>
                     </div>
                 </div>
+                    <#if purchaseError?? && purchaseError>
+                        <div class="alert alert-danger mt-3">Unable to complete purchase. Check quantity and listing availability.</div>
+                    </#if>
                     <form action="/customer/shop/${listing.listingId}/purchase" method="post" class="row mt-3">
                         <div class="col">
                             <label for="quantity" class="col-form-label">Quantity</label>
-                            <input type="number" id="quantity" name="quantity" class="form-control" required>
+                            <input type="number" id="quantity" name="quantity" class="form-control" min="1" max="${listing.quantity}" required>
                             <div class="invalid-feedback">
                                 Please choose a quantity.
                             </div>
                         </div>
                         <div class="col d-grid">
-                            <button type="submit" class="btn btn-success mt-4">
+                            <button type="submit" class="btn btn-success mt-4" <#if listing.quantity <= 0 || listing.status != "AVAILABLE">disabled</#if>>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag-check"
                                     viewBox="0 0 16 16">
                                     <path fill-rule="evenodd"

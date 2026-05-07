@@ -29,7 +29,7 @@
         main {
             width: min(820px, calc(100% - 32px));
             margin: 0 auto;
-            padding: 32px 0 48px;
+            padding: 0 0 48px;
         }
 
         header {
@@ -38,6 +38,8 @@
             align-items: end;
             gap: 16px;
             margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--line);
         }
 
         h1 {
@@ -56,6 +58,7 @@
             border: 1px solid var(--line);
             border-radius: 8px;
             padding: 18px;
+            border-top: 4px solid var(--brand);
         }
 
         .grid {
@@ -86,6 +89,13 @@
             padding: 9px 10px;
             font: inherit;
             background: #fff;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: 2px solid #cfe5df;
+            border-color: var(--brand);
         }
 
         textarea {
@@ -131,6 +141,17 @@
             background: #dfe4e7;
         }
 
+        .listing-preview {
+            width: min(100%, 320px);
+            height: 210px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            margin-top: 8px;
+            background: #f8f9fa;
+        }
+
         @media (max-width: 680px) {
             header,
             .grid,
@@ -142,6 +163,8 @@
     </style>
 </head>
 <body>
+<#include "/fragments/navbar.ftlh">
+<@renderNavbar userType="seller" />
 <main>
     <header>
         <div>
@@ -151,7 +174,7 @@
         <a class="button secondary" href="/seller/listings?sellerId=${sellerId}">Back</a>
     </header>
 
-    <form method="post" action="${formAction}">
+    <form method="post" action="${formAction}" enctype="multipart/form-data">
         <div class="grid">
             <div class="full">
                 <label for="title">Title</label>
@@ -161,6 +184,15 @@
             <div class="full">
                 <label for="description">Description</label>
                 <textarea id="description" name="description">${listing.description!}</textarea>
+            </div>
+
+            <div class="full">
+                <label for="listingPhoto">Listing Photo</label>
+                <input id="listingPhoto" name="listingPhoto" type="file" accept="image/*">
+                <#if listing.hasStoredPhoto()>
+                    <p class="muted">Current photo will stay unless you upload a new one.</p>
+                    <img class="listing-preview" src="/seller/listings/${listing.listingId}/photo" alt="${listing.title} photo">
+                </#if>
             </div>
 
             <div>

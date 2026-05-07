@@ -1,8 +1,12 @@
 package com.CSC340.MinervasList.mvc;
 
-import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,23 +15,39 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.CSC340.MinervasList.dto.ReviewReplyRequest;
 import com.CSC340.MinervasList.entity.Customer;
 import com.CSC340.MinervasList.entity.Listing;
+import com.CSC340.MinervasList.entity.Review;
 import com.CSC340.MinervasList.entity.Seller;
 import com.CSC340.MinervasList.service.ListingService;
+import com.CSC340.MinervasList.service.ReviewService;
 import com.CSC340.MinervasList.service.SellerService;
+import com.CSC340.MinervasList.service.UserService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/seller")
 public class SellerUiController {
 
+    private static final Logger log = LoggerFactory.getLogger(SellerUiController.class);
+
     private final ListingService listingService;
     private final SellerService sellerService;
+    private final ReviewService reviewService;
+    private final UserService userService;
 
-    public SellerUiController(ListingService listingService, SellerService sellerService) {
+    public SellerUiController(ListingService listingService,
+                              SellerService sellerService,
+                              ReviewService reviewService,
+                              UserService userService) {
         this.listingService = listingService;
         this.sellerService = sellerService;
+        this.reviewService = reviewService;
+        this.userService = userService;
     }
 
     @GetMapping("/signup")
@@ -37,65 +57,247 @@ public class SellerUiController {
     }
 
     @PostMapping("/signup")
-    public String signup(@ModelAttribute Seller seller) {
-        sellerService.createSeller(seller);
-        return "redirect:/login";
+    public String signup(@ModelAttribute Seller seller,
+                         @RequestParam(name = "profilePhoto", required = false) MultipartFile profilePhoto) {
+        try {
+            Seller createdSeller = sellerService.createSellerWithPhoto(seller, profilePhoto);
+            return "redirect:/login?sellerCreated=" + createdSeller.getUserId();
+        } catch (RuntimeException ex) {
+            log.warn("Seller signup failed for email '{}': {}", seller.getEmail(), ex.getMessage());
+            return "redirect:/signup?error=seller";
+        }
+    }
+
+    @PostMapping("/signin")
+    public String signin(@RequestParam String email,
+                         @RequestParam String password,
+                         HttpSession session) {
+        try {
+            String userType = sellerService.getUserTypeForEmail(email).trim();
+
+            if ("SELLER".equalsIgnoreCase(userType)) {
+                Seller seller = sellerService.getSellerByEmail(email);
+
+                if (!sellerService.credentialsMatch(seller, password)) {
+                    log.warn("Seller login rejected for email '{}': password mismatch", email);
+                    return "redirect:/login?error=sellerPassword";
+                }
+
+                session.setAttribute("sellerId", seller.getUserId());
+                log.info("Seller login succeeded for email '{}' with sellerId {}", seller.getEmail(), seller.getUserId());
+                return "redirect:/seller/home";
+            }
+
+            if ("CUSTOMER".equalsIgnoreCase(userType)
+                    && userService.getUserByEmail(email) instanceof Customer customer) {
+                if (customer.getPassword().equals(password)) {
+                    session.setAttribute("customerId", customer.getUserId());
+                    log.info("Customer login routed from seller tab for email '{}'", customer.getEmail());
+                    return "redirect:/customer/home";
+                }
+                return "redirect:/login?error=customer";
+            }
+
+            log.warn("Seller login rejected for email '{}': found user_type '{}'", email, userType);
+            return "MISSING".equals(userType)
+                    ? "redirect:/login?error=sellerMissing"
+                    : "redirect:/login?error=sellerWrongType";
+        } catch (Exception e) {
+            String userType = sellerService.getUserTypeForEmail(email);
+            log.warn("Seller login failed for email '{}': {}. Native user_type lookup: {}", email, e.getMessage(), userType);
+            return "MISSING".equals(userType)
+                    ? "redirect:/login?error=sellerMissing"
+                    : "redirect:/login?error=sellerWrongType";
+        }
+    }
+
+    @GetMapping({"/", "/home"})
+    public String sellerHome(HttpSession session, Model model) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("seller", seller);
+        model.addAttribute("stats", sellerService.getSellerStats(seller.getUserId()));
+        model.addAttribute("recentListings", listingService.getListingsBySellerId(seller.getUserId()));
+        return "seller/home";
+    }
+
+    @GetMapping("/profile")
+    public String sellerProfile(HttpSession session, Model model) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("seller", seller);
+        model.addAttribute("stats", sellerService.getSellerStats(seller.getUserId()));
+        return "seller/profile";
+    }
+
+    @PostMapping("/profile")
+    public String updateProfile(HttpSession session,
+                                @ModelAttribute Seller sellerForm,
+                                @RequestParam(name = "profilePhoto", required = false) MultipartFile profilePhoto) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        try {
+            sellerService.updateSellerWithPhoto(seller.getUserId(), sellerForm, profilePhoto);
+            return "redirect:/seller/profile?updated";
+        } catch (RuntimeException ex) {
+            log.warn("Seller profile update failed for sellerId {}: {}", seller.getUserId(), ex.getMessage(), ex);
+            return "redirect:/seller/profile?error=update";
+        }
     }
 
     @GetMapping("/listings")
-    public String sellerListings(@RequestParam(required = false) Long sellerId, Model model) {
-        List<Seller> sellers = sellerService.getAllSellers();
-        Seller selectedSeller = null;
-        List<Listing> listings = Collections.emptyList();
-
-        if (sellerId != null) {
-            selectedSeller = sellerService.getSellerById(sellerId);
-            listings = listingService.getListingsBySellerId(sellerId);
+    public String sellerListings(HttpSession session, Model model) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
         }
-
-        model.addAttribute("sellers", sellers);
-        model.addAttribute("selectedSeller", selectedSeller);
-        model.addAttribute("selectedSellerId", sellerId);
-        model.addAttribute("listings", listings);
-        model.addAttribute("demoSeller", new Seller());
-        return "seller-listings";
+        try {
+            model.addAttribute("seller", seller);
+            model.addAttribute("selectedSeller", seller);
+            model.addAttribute("selectedSellerId", seller.getUserId());
+            model.addAttribute("listings", listingService.getListingsBySellerId(seller.getUserId()));
+            model.addAttribute("stats", sellerService.getSellerStats(seller.getUserId()));
+            return "seller-listings";
+        } catch (RuntimeException ex) {
+            log.warn("Seller listings page failed for sellerId {}: {}", seller.getUserId(), ex.getMessage(), ex);
+            return "redirect:/seller/home?error=listings";
+        }
     }
 
     @GetMapping("/listings/new")
-    public String newListingForm(@RequestParam Long sellerId, Model model) {
-        addListingFormAttributes(model, sellerId, new Listing(), "Create Listing", "/seller/listings?sellerId=" + sellerId);
+    public String newListingForm(HttpSession session, Model model) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        addListingFormAttributes(model, seller.getUserId(), new Listing(), "Create Listing", "/seller/listings");
         return "seller-listing-form";
     }
 
     @PostMapping("/listings")
-    public String createListing(@RequestParam Long sellerId, @ModelAttribute Listing listing) {
-        listingService.createListingForSeller(sellerId, listing);
-        return "redirect:/seller/listings?sellerId=" + sellerId;
+    public String createListing(HttpSession session,
+                                @ModelAttribute Listing listing,
+                                @RequestParam(name = "listingPhoto", required = false) MultipartFile listingPhoto) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        listingService.createListingForSellerWithPhoto(seller.getUserId(), listing, listingPhoto);
+        return "redirect:/seller/listings";
     }
 
     @GetMapping("/listings/{listingId}/edit")
-    public String editListingForm(@PathVariable Long listingId, @RequestParam Long sellerId, Model model) {
-        Listing listing = listingService.getSellerListing(sellerId, listingId);
-        addListingFormAttributes(model, sellerId, listing, "Update Listing",
-                "/seller/listings/" + listingId + "?sellerId=" + sellerId);
+    public String editListingForm(@PathVariable Long listingId, HttpSession session, Model model) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        Listing listing = listingService.getSellerListing(seller.getUserId(), listingId);
+        addListingFormAttributes(model, seller.getUserId(), listing, "Update Listing",
+                "/seller/listings/" + listingId);
         return "seller-listing-form";
     }
 
     @PostMapping("/listings/{listingId}")
     public String updateListing(@PathVariable Long listingId,
-                                @RequestParam Long sellerId,
-                                @ModelAttribute Listing listing) {
-        listingService.updateSellerListing(sellerId, listingId, listing);
-        return "redirect:/seller/listings?sellerId=" + sellerId;
+                                HttpSession session,
+                                @ModelAttribute Listing listing,
+                                @RequestParam(name = "listingPhoto", required = false) MultipartFile listingPhoto) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        listingService.updateSellerListingWithPhoto(seller.getUserId(), listingId, listing, listingPhoto);
+        return "redirect:/seller/listings";
     }
 
-    @PostMapping("/demo-seller")
-    public String createDemoSeller(@ModelAttribute Seller demoSeller) {
-        Seller createdSeller = sellerService.createSeller(demoSeller);
-        return "redirect:/seller/listings?sellerId=" + createdSeller.getUserId();
+    @PostMapping("/listings/{listingId}/delete")
+    public String deleteListing(@PathVariable Long listingId, HttpSession session) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        listingService.deleteSellerListing(seller.getUserId(), listingId);
+        return "redirect:/seller/listings?deleted";
     }
 
-    private void addListingFormAttributes(Model model, Long sellerId, Listing listing, String formTitle, String formAction) {
+    @GetMapping("/reviews")
+    public String sellerReviews(HttpSession session, Model model) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        List<Review> reviews = reviewService.getReviewsBySellerId(seller.getUserId());
+        model.addAttribute("seller", seller);
+        model.addAttribute("reviews", reviews);
+        model.addAttribute("replyRequest", new ReviewReplyRequest());
+        return "seller/reviews";
+    }
+
+    @PostMapping("/reviews/{reviewId}/reply")
+    public String replyToReview(@PathVariable Long reviewId,
+                                HttpSession session,
+                                @RequestParam String sellerReply) {
+        Seller seller = requireSellerOrRedirect(session);
+        if (seller == null) {
+            return "redirect:/login";
+        }
+        ReviewReplyRequest request = new ReviewReplyRequest();
+        request.setSellerReply(sellerReply);
+        reviewService.replyToReview(reviewId, seller.getUserId(), request);
+        return "redirect:/seller/reviews?replied";
+    }
+
+    @GetMapping("/photo/{sellerId}")
+    public ResponseEntity<byte[]> sellerPhoto(@PathVariable Long sellerId) {
+        Seller seller = sellerService.getSellerById(sellerId);
+        if (!seller.hasStoredProfilePhoto()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (seller.getProfilePhotoContentType() != null) {
+            mediaType = MediaType.parseMediaType(seller.getProfilePhotoContentType());
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
+                .contentType(mediaType)
+                .body(seller.getProfilePhotoData());
+    }
+
+    @GetMapping("/listings/{listingId}/photo")
+    public ResponseEntity<byte[]> listingPhoto(@PathVariable Long listingId) {
+        Listing listing = listingService.getListingById(listingId);
+        if (!listing.hasStoredPhoto()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (listing.getPhotoContentType() != null) {
+            mediaType = MediaType.parseMediaType(listing.getPhotoContentType());
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CACHE_CONTROL, "no-cache, no-store, must-revalidate")
+                .contentType(mediaType)
+                .body(listing.getPhotoData());
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
+    }
+
+    private void addListingFormAttributes(Model model, Long sellerId, Listing listing, String formTitle,
+                                          String formAction) {
         Seller seller = sellerService.getSellerById(sellerId);
         model.addAttribute("seller", seller);
         model.addAttribute("sellerId", sellerId);
@@ -105,5 +307,13 @@ public class SellerUiController {
         model.addAttribute("categories", Listing.Category.values());
         model.addAttribute("conditions", Listing.ItemCondition.values());
         model.addAttribute("statuses", Listing.ListingStatus.values());
+    }
+
+    private Seller requireSellerOrRedirect(HttpSession session) {
+        Long sellerId = (Long) session.getAttribute("sellerId");
+        if (sellerId == null) {
+            return null;
+        }
+        return sellerService.getSellerById(sellerId);
     }
 }

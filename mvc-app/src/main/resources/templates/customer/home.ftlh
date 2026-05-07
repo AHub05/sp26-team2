@@ -18,7 +18,7 @@
         <div class="hero-content">
             <h1>Welcome to Minerva's List</h1>
             <p>The Marketplace for Spartans</p>
-            <button onclick="location.href='customer-prototype/listing.html'">Browse Listings</button>
+            <button onclick="location.href='/customer/browse'">Browse Listings</button>
         </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
