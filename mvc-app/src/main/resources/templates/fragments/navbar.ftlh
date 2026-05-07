@@ -121,9 +121,7 @@
                     <li>
                         <a class="minerva-nav__link" href="/seller/listings">Listings</a>
                     </li>
-                    <li>
-                        <a class="minerva-nav__link" href="/seller/reviews">Reviews</a>
-                    </li>
+                    
                     <li>
                         <a class="minerva-nav__link" href="/seller/profile">Profile</a>
                     </li>

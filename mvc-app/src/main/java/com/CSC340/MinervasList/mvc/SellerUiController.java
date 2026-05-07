@@ -1,7 +1,5 @@
 package com.CSC340.MinervasList.mvc;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -17,13 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.CSC340.MinervasList.dto.ReviewReplyRequest;
 import com.CSC340.MinervasList.entity.Customer;
 import com.CSC340.MinervasList.entity.Listing;
-import com.CSC340.MinervasList.entity.Review;
 import com.CSC340.MinervasList.entity.Seller;
 import com.CSC340.MinervasList.service.ListingService;
-import com.CSC340.MinervasList.service.ReviewService;
 import com.CSC340.MinervasList.service.SellerService;
 import com.CSC340.MinervasList.service.UserService;
 
@@ -37,16 +32,13 @@ public class SellerUiController {
 
     private final ListingService listingService;
     private final SellerService sellerService;
-    private final ReviewService reviewService;
     private final UserService userService;
 
     public SellerUiController(ListingService listingService,
                               SellerService sellerService,
-                              ReviewService reviewService,
                               UserService userService) {
         this.listingService = listingService;
         this.sellerService = sellerService;
-        this.reviewService = reviewService;
         this.userService = userService;
     }
 
@@ -223,36 +215,16 @@ public class SellerUiController {
         if (seller == null) {
             return "redirect:/login";
         }
-        listingService.deleteSellerListing(seller.getUserId(), listingId);
-        return "redirect:/seller/listings?deleted";
+        try {
+            listingService.deleteSellerListing(seller.getUserId(), listingId);
+            return "redirect:/seller/listings?deleted";
+        } catch (RuntimeException ex) {
+            log.warn("Failed to delete listing {} for seller {}: {}", listingId, seller.getUserId(), ex.getMessage());
+            return "redirect:/seller/listings?error=hasPurchases";
+        }
     }
 
-    @GetMapping("/reviews")
-    public String sellerReviews(HttpSession session, Model model) {
-        Seller seller = requireSellerOrRedirect(session);
-        if (seller == null) {
-            return "redirect:/login";
-        }
-        List<Review> reviews = reviewService.getReviewsBySellerId(seller.getUserId());
-        model.addAttribute("seller", seller);
-        model.addAttribute("reviews", reviews);
-        model.addAttribute("replyRequest", new ReviewReplyRequest());
-        return "seller/reviews";
-    }
-
-    @PostMapping("/reviews/{reviewId}/reply")
-    public String replyToReview(@PathVariable Long reviewId,
-                                HttpSession session,
-                                @RequestParam String sellerReply) {
-        Seller seller = requireSellerOrRedirect(session);
-        if (seller == null) {
-            return "redirect:/login";
-        }
-        ReviewReplyRequest request = new ReviewReplyRequest();
-        request.setSellerReply(sellerReply);
-        reviewService.replyToReview(reviewId, seller.getUserId(), request);
-        return "redirect:/seller/reviews?replied";
-    }
+    
 
     @GetMapping("/photo/{sellerId}")
     public ResponseEntity<byte[]> sellerPhoto(@PathVariable Long sellerId) {

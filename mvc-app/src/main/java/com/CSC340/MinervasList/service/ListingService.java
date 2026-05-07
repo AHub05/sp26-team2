@@ -11,16 +11,20 @@ import org.springframework.web.multipart.MultipartFile;
 import com.CSC340.MinervasList.entity.Listing;
 import com.CSC340.MinervasList.entity.Seller;
 import com.CSC340.MinervasList.repository.ListingRepository;
+import com.CSC340.MinervasList.repository.PurchaseRepository;
 import com.CSC340.MinervasList.repository.SellerRepository;
 
 @Service
 public class ListingService {
     private final ListingRepository listingRepository;
     private final SellerRepository sellerRepository;
+    private final PurchaseRepository purchaseRepository;
 
-    public ListingService(ListingRepository listingRepository, SellerRepository sellerRepository) {
+    public ListingService(ListingRepository listingRepository, SellerRepository sellerRepository,
+                          PurchaseRepository purchaseRepository) {
         this.listingRepository = listingRepository;
         this.sellerRepository = sellerRepository;
+        this.purchaseRepository = purchaseRepository;
     }
 
     public List<Listing> getAllListings() {
@@ -90,6 +94,12 @@ public class ListingService {
 
     public void deleteSellerListing(Long sellerId, Long listingId) {
         Listing listing = getSellerListing(sellerId, listingId);
+
+        // Prevent deleting listings that have purchases associated.
+        if (!purchaseRepository.findByListingListingId(listingId).isEmpty()) {
+            throw new RuntimeException("Cannot delete listing with existing purchases");
+        }
+
         listingRepository.delete(listing);
     }
 
