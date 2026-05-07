@@ -1,9 +1,12 @@
 package com.CSC340.MinervasList.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.CSC340.MinervasList.entity.Listing;
 import com.CSC340.MinervasList.entity.Seller;
@@ -53,9 +56,15 @@ public class ListingService {
     public Listing createListingForSeller(Long sellerId, Listing listing) {
         Seller seller = sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new RuntimeException("Seller not found with ID: " + sellerId));
-
+            
         listing.setSeller(seller);
         return listingRepository.save(listing);
+    }
+
+    @Transactional
+    public Listing createListingForSellerWithPhoto(Long sellerId, Listing listing, MultipartFile listingPhoto) {
+        applyListingPhoto(listing, listingPhoto);
+        return createListingForSeller(sellerId, listing);
     }
 
     public Listing updateListing(Long id, Listing updatedListing) {
@@ -67,6 +76,15 @@ public class ListingService {
     public Listing updateSellerListing(Long sellerId, Long listingId, Listing updatedListing) {
         Listing existing = getSellerListing(sellerId, listingId);
         copyEditableFields(existing, updatedListing);
+        return listingRepository.save(existing);
+    }
+
+    @Transactional
+    public Listing updateSellerListingWithPhoto(Long sellerId, Long listingId, Listing updatedListing,
+                                                MultipartFile listingPhoto) {
+        Listing existing = getSellerListing(sellerId, listingId);
+        copyEditableFields(existing, updatedListing);
+        applyListingPhoto(existing, listingPhoto);
         return listingRepository.save(existing);
     }
 
@@ -87,5 +105,18 @@ public class ListingService {
         existing.setPrice(updatedListing.getPrice());
         existing.setQuantity(updatedListing.getQuantity());
         existing.setStatus(updatedListing.getStatus());
+    }
+
+    private void applyListingPhoto(Listing listing, MultipartFile listingPhoto) {
+        if (listingPhoto == null || listingPhoto.isEmpty()) {
+            return;
+        }
+
+        try {
+            listing.setPhotoData(listingPhoto.getBytes());
+            listing.setPhotoContentType(listingPhoto.getContentType());
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to store listing photo.", ex);
+        }
     }
 }

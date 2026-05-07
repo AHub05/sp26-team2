@@ -26,7 +26,7 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmailIgnoreCase(email == null ? "" : email.trim())
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
     }
 
@@ -36,7 +36,7 @@ public class UserService {
             throw new RuntimeException("User with this email already exists.");
         }
 
-        // Optional rule for your app
+        
         if (!user.getEmail().endsWith("@uncg.edu")) {
             throw new RuntimeException("Email must be a UNCG email.");
         }

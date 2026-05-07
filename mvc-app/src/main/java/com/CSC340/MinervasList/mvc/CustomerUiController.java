@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.CSC340.MinervasList.entity.Customer;
 import com.CSC340.MinervasList.entity.Listing;
 import com.CSC340.MinervasList.entity.Purchase;
+import com.CSC340.MinervasList.entity.Seller;
 import com.CSC340.MinervasList.service.CustomerService;
 import com.CSC340.MinervasList.service.ListingService;
 import com.CSC340.MinervasList.service.PurchaseService;
 import com.CSC340.MinervasList.service.ReviewService;
+import com.CSC340.MinervasList.service.SellerService;
 import com.CSC340.MinervasList.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
@@ -38,14 +40,18 @@ public class CustomerUiController {
     private ReviewService reviewService;
     @Autowired
     private ListingService listingService;
+    @Autowired
+    private SellerService sellerService;
 
     @GetMapping("/home")
     public String home(HttpSession session, Model model) {
         Long customerId = (Long)session.getAttribute("customerId");
         if(customerId == null) {
-            return "redirect:/home";
+            return "redirect:/login";
         }
 
+        Customer customer = customerService.getCustomerById(customerId);
+        model.addAttribute("customer", customer);
         return "customer/home";
     }
 
@@ -64,14 +70,28 @@ public class CustomerUiController {
     @PostMapping("/login")
     public String login(@RequestParam String email, @RequestParam String password, HttpSession session) {
         try {
-            Customer customer = (Customer)userService.getUserByEmail(email);
-            if (customer != null) {
-                session.setAttribute("customerId", customer.getUserId());
-                return "redirect:/customer/";
+            String userType = sellerService.getUserTypeForEmail(email).trim();
+
+            if ("SELLER".equalsIgnoreCase(userType)) {
+                Seller seller = sellerService.getSellerByEmail(email);
+                if (sellerService.credentialsMatch(seller, password)) {
+                    session.setAttribute("sellerId", seller.getUserId());
+                    return "redirect:/seller/home";
+                }
+                return "redirect:/login?error=sellerPassword";
             }
-            return "redirect:/login";
+
+            if ("CUSTOMER".equalsIgnoreCase(userType)
+                    && userService.getUserByEmail(email) instanceof Customer customer) {
+                if (customer.getPassword().equals(password)) {
+                    session.setAttribute("customerId", customer.getUserId());
+                    return "redirect:/customer/home";
+                }
+            }
+
+            return "redirect:/login?error=customer";
         } catch (Exception e) {
-            return "redirect:/login";
+            return "redirect:/login?error=customer";
         }
     }
 
@@ -108,14 +128,17 @@ public class CustomerUiController {
     }
 
     @GetMapping("/shop/{listingId}")
-    public String productListing(@PathVariable long listingId, Model model) {
+    public String productListing(@PathVariable long listingId,
+                                 @RequestParam(required = false) String error,
+                                 Model model) {
         Listing listing = listingService.getListingById(listingId);
         if (listing != null) {
             model.addAttribute("listing", listing);
+            model.addAttribute("purchaseError", "purchase".equals(error));
             return "customer/item-listing";
         }
 
-        return "custome/browse";
+        return "redirect:/customer/browse";
     }
 
     @PostMapping("/shop/{listingId}/purchase")
@@ -131,13 +154,17 @@ public class CustomerUiController {
             return "redirect:/customer/browse";
         }
 
-        Purchase purchase = new Purchase();
-        purchase.setQuantity(quantity.intValue());
-        purchase.setTotalPrice(listing.getPrice().doubleValue() * quantity);
-        purchase.setPurchaseDate(LocalDateTime.now());
-        purchase.setCustomer(customer);
-        purchase.setListing(listing);
-        purchaseService.createPurchase(purchase);
+        try {
+            Purchase purchase = new Purchase();
+            purchase.setQuantity(quantity.intValue());
+            purchase.setTotalPrice(listing.getPrice().doubleValue() * quantity);
+            purchase.setPurchaseDate(LocalDateTime.now());
+            purchase.setCustomer(customer);
+            purchase.setListing(listing);
+            purchaseService.createPurchase(purchase);
+        } catch (RuntimeException ex) {
+            return "redirect:/customer/shop/" + listingId + "?error=purchase";
+        }
 
         return "redirect:/customer/profile?success";
     }

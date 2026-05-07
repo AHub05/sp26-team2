@@ -2,19 +2,21 @@ package com.CSC340.MinervasList.entity;
 
 import java.util.List;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @DiscriminatorValue("SELLER")
 @EqualsAndHashCode(callSuper = true)
+@DynamicUpdate
 public class Seller extends User {
 
     @Column(name = "business_name")
@@ -23,12 +25,16 @@ public class Seller extends User {
     @Column(name = "profile_photo_url")
     private String profilePhotoUrl;
 
-    @Lob
-    @Column(name = "bio")
+    @Column(name = "profile_photo_data", columnDefinition = "bytea")
+    private byte[] profilePhotoData;
+
+    @Column(name = "profile_photo_content_type")
+    private String profilePhotoContentType;
+
+    @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
 
-    @Lob
-    @Column(name = "services_offered")
+    @Column(name = "services_offered", columnDefinition = "TEXT")
     private String servicesOffered;
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -59,6 +65,22 @@ public class Seller extends User {
         this.profilePhotoUrl = profilePhotoUrl;
     }
 
+    public byte[] getProfilePhotoData() {
+        return profilePhotoData;
+    }
+
+    public void setProfilePhotoData(byte[] profilePhotoData) {
+        this.profilePhotoData = profilePhotoData;
+    }
+
+    public String getProfilePhotoContentType() {
+        return profilePhotoContentType;
+    }
+
+    public void setProfilePhotoContentType(String profilePhotoContentType) {
+        this.profilePhotoContentType = profilePhotoContentType;
+    }
+
     public String getBio() {
         return bio;
     }
@@ -73,6 +95,10 @@ public class Seller extends User {
 
     public void setServicesOffered(String servicesOffered) {
         this.servicesOffered = servicesOffered;
+    }
+
+    public boolean hasStoredProfilePhoto() {
+        return profilePhotoData != null && profilePhotoData.length > 0;
     }
 
     public List<Listing> getListings() {

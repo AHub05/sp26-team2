@@ -66,9 +66,29 @@ public class PurchaseService {
         Listing existingListing = listingRepository.findById(listingId)
                 .orElseThrow(() -> new RuntimeException("Listing not found with ID: " + listingId));
 
+        if (existingListing.getStatus() != Listing.ListingStatus.AVAILABLE) {
+            throw new RuntimeException("This listing is not available for purchase.");
+        }
+
+        if (existingListing.getQuantity() == null || existingListing.getQuantity() <= 0) {
+            throw new RuntimeException("This listing is out of stock.");
+        }
+
+        if (purchase.getQuantity() > existingListing.getQuantity()) {
+            throw new RuntimeException("Requested quantity exceeds available stock.");
+        }
+
         purchase.setCustomer(existingCustomer);
         purchase.setListing(existingListing);
         purchase.setPurchaseDate(LocalDateTime.now());
+        purchase.setTotalPrice(existingListing.getPrice().doubleValue() * purchase.getQuantity());
+
+        int remainingQuantity = existingListing.getQuantity() - purchase.getQuantity();
+        existingListing.setQuantity(remainingQuantity);
+        if (remainingQuantity <= 0) {
+            existingListing.setStatus(Listing.ListingStatus.SOLD);
+        }
+        listingRepository.save(existingListing);
 
         return purchaseRepository.save(purchase);
     }
