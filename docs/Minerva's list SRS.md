@@ -41,8 +41,8 @@
 Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`.** Each story includes at least one **Given/When/Then** scenario.
 
 ### 2.1 Customer Stories
-- **US‑CUST‑001 — Search Available Listings**  
-  _Story:_ As a customer, I want to filter and search through listings so that I don't have to look through listings of things I don't want  
+- **US‑CUST‑001 — Browse Available Listings**  
+  _Story:_ As a customer, I want to browse through listings, so that I can see what is to offer.
   _Acceptance:_
   ```gherkin
   Scenario: Customer succesfully searches for listing
@@ -51,34 +51,34 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
     Then  all items related to the keyword or category show up and the customers search time is considerably shortened
   ```
 
-- **US‑CUST‑002 — Customer-Seller Messaging**  
-  _Story:_ As a customer, I want message sellers so that I know what I am buying or am able to haggle a deal  
+- **US‑CUST‑002 — Purchase a Listing Item**  
+  _Story:_ As a customer, I want to be able to purchase an item, so that I can use it.
   _Acceptance:_
   ```gherkin
-  Scenario: Customer messages in regards to listing
+  Scenario: Customer purchases and item
     Given a user is authorized and in good standing and on a listing page
-    When  there is vagueness in the descripiton so the customer presses the "Contact Seller" button
-    Then  a messaging box pops up where the customer can contact the seller live
+    When they decide to click on a listing they like
+    Then they input the amount of items they want and click purchase
   ```
 
-- **US‑CUST‑003 — Review Item**  
-  _Story:_ As a customer, I want to leave reviews on products I bought so that future customers have an idea of what they are buying   
+- **US‑CUST‑003 — View Purchase History**  
+  _Story:_ As a customer, I want to be able to view items I have purchased in the past, so that I can see my trends.
   _Acceptance:_
   ```gherkin
-  Scenario: Customer recieves a product that exceeds their expectations
-    Given a customer has confirmed purchase an item and they have not yet reviewed the item
-    When  they return to the product page where the review button is active and they click it
-    Then  the customer is able to write a review and leave a rating for the product, that they can post on the listing
+  Scenario: Customer views their purchase history
+    Given a customer has confirmed purchased an item
+    When they go to their customer profile
+    Then the customer is able to view all their previous purchases
   ```
 
-- **US‑CUST‑004 — View Seller Profile**  
-  _Story:_ As a customer, I want view a sellers profile so that I can see wht they specialize in or if they are good  
+- **US‑CUST‑004 — View Listing Detail**  
+  _Story:_ As a customer, I want view more details about a specific listing, so that I know more info before I buy it.
   _Acceptance:_
   ```gherkin
-  Scenario: Customer is gauging seller quality
-    Given the customer is logged in and on a listing screen
-    When  the customer selects the sellers name or profile
-    Then  the name is a links to the seller's profile which shows their rating, reviews people have left, and other listings they have up
+  Scenario: Customer is pondering a listing
+    Given the customer is browsing all listings
+    When the customer sees a listing they like
+    Then the customer is able to click on the product to see a dedicated page with more details.
   ```
 
 ### 2.2 Provider Stories
@@ -141,17 +141,15 @@ Write each story as: **As a `<role>`, I want `<capability>`, so that `<benefit>`
     Then the updated information appears on their public profile
   ```
 
-- **US‑PROV‑005 — Reject Non-Student Email Registration**  
-  _Story:_ As a provider, I want the system to restrict registration to university emails so that only verified students can create accounts. 
-
+- **US‑PROV‑005 — Display Provider Statistics**  
+  _Story:_ As a provider, I want to be able to view my statisitcs, so I know how my business is doing.
   _Acceptance:_
 
   ```gherkin
-  Scenario: Non-student email is rejected
-    Given a user is on the registration page
-    When  the user attempts to register using an email that does not end in @uncg.edu
-    Then  the system displays an error message
-    And the account is not created
+  Scenario: Provider puts in their information
+    Given a seller is logged in
+    When they switch to their dashboard
+    Then  the page displays the statistics summary
   ```
   
 ---
